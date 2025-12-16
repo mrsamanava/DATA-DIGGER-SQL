@@ -1,0 +1,167 @@
+1. CUSTOMER TABLES 
+
+
+CREATE DATABASE DataDigger
+
+CREATE TABLE Customers (
+    CustomerID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Email VARCHAR(100),
+    Address VARCHAR(200)
+);
+
+INSERT INTO Customers VALUES
+(1, 'Alice', 'alice@mail.com', 'Ahmedabad'),
+(2, 'Bob', 'bob@mail.com', 'Surat'),
+(3, 'Charlie', 'charlie@mail.com', 'Rajkot'),
+(4, 'David', 'david@mail.com', 'Vadodara'),
+(5, 'Eve', 'eve@mail.com', 'Mumbai');
+
+SELECT * FROM Customers
+
+UPDATE Customers
+SET Address='Amreli'
+WHERE CustomerID=2
+
+DELETE FROM customers WHERE CustomerID=2
+
+SELECT * FROM customers WHERE Name='Alice'
+
+
+2. ORDER TABLES 
+
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY,
+    CustomerID INT,
+    OrderDate DATE,
+    TotalAmount DECIMAL(10,2),
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+);
+
+INSERT INTO Orders VALUES
+(101, 1, '2025-01-01', 2500),
+(102, 2, '2025-01-05', 1500),
+(103, 1, '2025-02-01', 3200),
+(104, 3, '2025-02-15', 900),
+(105, 4, '2025-03-01', 4500);
+
+
+SELECT * FROM Orders
+WHERE CustomerID = 1;
+
+
+
+UPDATE Orders
+SET TotalAmount = 5000
+WHERE OrderID = 103;
+
+
+DELETE FROM Orders WHERE OrderID = 105;
+
+SELECT * FROM Orders
+WHERE OrderDate >= CURDATE() - INTERVAL 30 DAY;
+
+
+SELECT 
+    MAX(TotalAmount) AS Highest,
+    MIN(TotalAmount) AS Lowest,
+    AVG(TotalAmount) AS Average
+FROM Orders;
+
+
+3. Products Tables 
+
+CREATE TABLE Products (
+    ProductID INT PRIMARY KEY,
+    ProductName VARCHAR(100),
+    Price DECIMAL(10,2),
+    Stock INT
+);
+
+INSERT INTO Products VALUES
+(201, 'Keyboard', 800, 10),
+(202, 'Mouse', 500, 20),
+(203, 'Monitor', 7000, 5),
+(204, 'USB Cable', 200, 50),
+(205, 'Headphones', 1500, 15);
+
+
+SELECT * FROM Products
+ORDER BY Price DESC;
+
+
+UPDATE Products
+SET Price = 550
+WHERE ProductID = 202;
+
+
+DELETE FROM Products
+WHERE Stock = 0;
+
+
+SELECT * FROM Products
+WHERE Price BETWEEN 500 AND 2000;
+
+
+SELECT 
+    MAX(Price) AS HighestPrice,
+    MIN(Price) AS LowestPrice
+FROM Products;
+
+
+4.  Order details tables 
+
+CREATE TABLE OrderDetails (
+    OrderDetailID INT PRIMARY KEY,
+    OrderID INT,
+    ProductID INT,
+    Quantity INT,
+    SubTotal DECIMAL(10,2),
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+
+
+INSERT INTO OrderDetails VALUES
+(1, 101, 201, 2, 1600),
+(2, 101, 202, 1, 500),
+(3, 102, 205, 1, 1500),
+(4, 103, 203, 1, 7000),
+(5, 104, 204, 3, 600);
+
+
+SELECT * FROM OrderDetails
+WHERE OrderID = 101;
+
+
+SELECT SUM(SubTotal) AS TotalRevenue
+FROM OrderDetails;
+
+
+SELECT ProductID, SUM(Quantity) AS TotalQty
+FROM OrderDetails
+GROUP BY ProductID
+ORDER BY TotalQty DESC
+LIMIT 3;
+
+SELECT COUNT(*) AS TimesSold
+FROM OrderDetails
+WHERE ProductID = 201;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
